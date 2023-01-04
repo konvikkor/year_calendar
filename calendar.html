@@ -1,0 +1,83 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="css/year-calendar.css" />
+		<script type="text/javascript" src="js/year-calendar.js"></script>
+		
+		<script type="text/javascript">
+			document.addEventListener("DOMContentLoaded", function(event) {
+				var exception_dates = ['01.01.2021', '02.01.2021', '04.01.2021', '07.01.2021', '08.03.2021', '22.03.2021', '23.03.2021', '24.03.2021', '03.05.2021', '07.05.2021', '10.05.2021', '03.07.2021', '05.07.2021', '06.07.2021', '20.07.2021', '30.08.2021', '01.12.2021', '16.12.2021', '17.12.2021',
+				                       '03.01.2022', '04.01.2022', '05.03.2022', '08.03.2022', '21.03.2022', '22.03.2022', '23.03.2022', '02.05.2022', '09.05.2022', '10.05.2022', '06.07.2022', '27.08.2022', 	'29.08.2022', '30.08.2022', '22.10.2022', '24.10.2022', '25.10.2022',
+				                       '02.01.2023', '03.01.2023', '08.03.2023', '21.03.2023', '22.03.2023', '23.03.2023', '01.05.2023', '08.05.2023', '09.05.2023', '28.06.2023', '01.07.2023', '06.07.2023', '07.07.2023', '30.08.2023', '25.10.2023', '18.12.2023'];
+									   
+				var year = new Date().getFullYear();
+				
+				function select_calendar_date_callback(element, day, month, year){
+					let str_selected_date = day.padStart(2, '0') + '.' + month.padStart(2, '0') + '.' + year;
+					let selected_date = new Date(str_selected_date);
+					
+					console.debug(str_selected_date);
+					
+					if (element.classList.contains('calendar_weekend')) {
+						if (exception_dates.includes(str_selected_date) && selected_date.getDay() > 5){
+							exception_dates.add(str_selected_date);
+						}
+						else {
+							element.classList.remove('calendar_weekend');
+						}
+					}
+					else {
+						element.classList.add('calendar_weekend');
+					}
+				};
+				
+				function DrawCalendar(lang, year){
+					var calendar = new year_calendar({
+							element: document.getElementById('calendar'),
+							year: year,
+							lang: lang,
+							callback: select_calendar_date_callback,
+							exception_dates: exception_dates,
+							});
+						
+					calendar.draw();
+				};
+				
+				document.querySelector('#lang_select').addEventListener("change", function (){
+					DrawCalendar(this.value, year);
+				});
+				
+				document.querySelector('#prev_year').addEventListener("click", function (){
+					year = year -1;
+					DrawCalendar(this.value, year);
+				});
+				
+				document.querySelector('#next_year').addEventListener("click", function (){
+					year = year +1;
+					DrawCalendar(this.value, year);
+				});
+				
+				DrawCalendar("ru", year);
+			});
+			
+		</script>
+	</head>
+	<body>
+		<p>
+			<label for="lang_select">Выберите язык/Select language</label>
+			<select id="lang_select">
+				<option value="ru" default>Русский</option>
+				<option value="en" >English</option>
+			</select>
+		</p>
+		<p>
+			<label for"#">Года/Years</label>
+			<input type="button" id="prev_year" value="<<"/>
+			<input type="button" id="next_year" value=">>"/>
+		</p>
+
+		<div id='calendar' class='calendar'>
+		</div>
+	</body>
+</html>
